@@ -8,10 +8,10 @@
         "ext-pdo": "*"
     },
     "autoload":{
-        "psr-0":{
-            "controller":"",
-            "model":"",
-            "db":""
+        "psr-4":{
+            "controller\\":"src/controller",
+            "model\\":"src/model",
+            "db\\":"src/db"
         }
     },
     "config": {

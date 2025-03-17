@@ -4,9 +4,10 @@ namespace controller;
 use AllowDynamicProperties;
 use model\Annonce;
 use model\Annonceur;
+use model\Categorie;
 use model\Departement;
 use model\Photo;
-use model\Categorie;
+use function controller\isEmail;
 
 #[AllowDynamicProperties] class item {
     public function __construct(){

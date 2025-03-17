@@ -3,8 +3,8 @@
 namespace controller;
 
 use model\Annonce;
-use model\Photo;
 use model\Annonceur;
+use model\Photo;
 
 class index
 {
