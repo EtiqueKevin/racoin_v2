@@ -5,7 +5,7 @@ namespace controller;
 use model\Annonce;
 use model\Annonceur;
 
-class addItem
+class AddItem
 {
 
     function addItemView($twig, $menu, $chemin, $cat, $dpt)

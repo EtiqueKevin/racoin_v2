@@ -9,7 +9,7 @@ use model\Departement;
 use model\Photo;
 use function controller\isEmail;
 
-#[AllowDynamicProperties] class item {
+#[AllowDynamicProperties] class Item {
     public function __construct(){
     }
     function afficherItem($twig, $menu, $chemin, $n, $cat): void

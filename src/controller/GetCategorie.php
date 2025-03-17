@@ -7,7 +7,7 @@ use model\Annonceur;
 use model\Categorie;
 use model\Photo;
 
-class getCategorie {
+class GetCategorie {
 
     protected $categories = array();
 

@@ -15,7 +15,7 @@ class viewAnnonceur {
     public function __construct(){
     }
     function afficherAnnonceur($twig, $menu, $chemin, $n, $cat) {
-        $this->annonceur = annonceur::find($n);
+        $this->annonceur = Annonceur::find($n);
         if(!isset($this->annonceur)){
             echo "404";
             return;

@@ -5,10 +5,10 @@ error_reporting(E_ALL ^ E_DEPRECATED);
 use Slim\App;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use controller\getCategorie;
-use controller\getDepartment;
+use controller\GetCategorie;
+use controller\GetDepartment;
 use controller\index;
-use controller\item;
+use controller\Item;
 use db\Connection;
 use model\Annonce;
 use model\Annonceur;
@@ -84,13 +84,13 @@ $app->get('/item/{n}', function ($request, $response, $arg) use ($twig, $menu, $
 });
 
 $app->get('/add', function () use ($twig, $app, $menu, $chemin, $cat, $dpt) {
-    $ajout = new \controller\addItem();
+    $ajout = new \controller\AddItem();
     $ajout->addItemView($twig, $menu, $chemin, $cat->getCategories(), $dpt->getAllDepartments());
 });
 
 $app->post('/add', function ($request) use ($twig, $app, $menu, $chemin) {
     $allPostVars = $request->getParsedBody();
-    $ajout = new \controller\addItem();
+    $ajout = new \controller\AddItem();
     $ajout->addNewItem($twig, $menu, $chemin, $allPostVars);
 });
 
