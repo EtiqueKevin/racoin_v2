@@ -6,13 +6,15 @@
         "slim/twig-view": "^3.0",
         "illuminate/database": "11.*",
         "ext-mysqli": "*",
-        "ext-pdo": "*"
+        "ext-pdo": "*",
+        "swagger-api/swagger-ui": "^5.20"
     },
     "autoload":{
         "psr-4":{
             "controller\\":"src/controller",
             "model\\":"src/model",
-            "db\\":"src/db"
+            "db\\":"src/db",
+            "middleware\\":"src/middleware"
         }
     },
     "config": {

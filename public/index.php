@@ -13,20 +13,28 @@ use Slim\Psr7\Response as Psr7Response;
 use controller\{GetCategorie, GetDepartment, Index, Item, AddItem, Search, ViewAnnonceur, KeyGenerator};
 use db\Connection;
 use model\{Annonce, Annonceur, Categorie, Departement};
+use middleware\LoggerMiddleware;
 
-// Create Connection
+// Crée la connexion à la base de données
 Connection::createConn();
 
-// Create App
+// Crée l'application Slim
 $app = AppFactory::create();
 
-// Create Twig
+// Crée Twig
 $twig = Twig::create(__DIR__ . '/../template', ['cache' => false]);
 
-// Add Twig-View Middleware
+// Configure le middleware 
+$logFile = __DIR__ . '/../logs/app.log';
+$logDir = dirname($logFile);
+if (!file_exists($logDir)) {
+    mkdir($logDir, 0777, true);
+}
+
+// Ajouter les middlewares
+$app->add(new LoggerMiddleware($logFile));
 $app->add(TwigMiddleware::create($app, $twig));
 
-// Add trailing slash middleware
 $app->add(function (Request $request, $handler): Response {
     $uri = $request->getUri();
     $path = $uri->getPath();
@@ -46,7 +54,7 @@ $app->add(function (Request $request, $handler): Response {
     return $handler->handle($request);
 });
 
-// Start session
+// session
 if (!isset($_SESSION)) {
     session_start();
     $_SESSION['formStarted'] = true;
@@ -138,12 +146,23 @@ $app->get('/cat/{n}', function (Request $request, Response $response, array $arg
 // API Routes
 $app->group('/api', function ($app) use ($twig, $menu, $chemin, $cat): void {
     $app->get('', function (Request $request, Response $response) use ($twig, $menu, $chemin): Response {
-        $template = $twig->load('api.html.twig');
         $menu = [
             ['href' => $chemin, 'text' => 'Accueil'],
             ['href' => "{$chemin}/api", 'text' => 'Api']
         ];
-        $response->getBody()->write($template->render(['breadcrumb' => $menu, 'chemin' => $chemin]));
+        
+        $view = $twig->fetch('api.html.twig', [
+            'breadcrumb' => $menu, 
+            'chemin' => $chemin
+        ]);
+        
+        $response->getBody()->write($view);
+        return $response;
+    });
+
+    $app->get('/doc', function (Request $request, Response $response) use ($twig): Response {
+        $view = $twig->fetch('swagger.html.twig');
+        $response->getBody()->write($view);
         return $response;
     });
 
