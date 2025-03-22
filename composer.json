@@ -1,8 +1,9 @@
 {
     "require": {
         "php": ">=8.2",
-        "slim/slim": "3.*",
-        "twig/twig": "3.*",
+        "slim/slim": "^4.0",
+        "slim/psr7": "^1.6",
+        "slim/twig-view": "^3.0",
         "illuminate/database": "11.*",
         "ext-mysqli": "*",
         "ext-pdo": "*"

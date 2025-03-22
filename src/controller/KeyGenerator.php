@@ -3,56 +3,64 @@
 namespace controller;
 
 use model\ApiKey;
+use Psr\Http\Message\ResponseInterface as Response;
+use Slim\Views\Twig;
+use Slim\Psr7\Response as SlimResponse;
 
-class KeyGenerator {
+class KeyGenerator 
+{
+    public function show(Twig $twig, array $menu, string $chemin, array $cat): Response 
+    {
+        $menu = [
+            ['href' => $chemin, 'text' => 'Accueil'],
+            ['href' => $chemin."/api/key", 'text' => "Générateur de clé API"]
+        ];
 
-    function show($twig, $menu, $chemin, $cat) {
-        $template = $twig->load("key-generator.html.twig");
-        $menu = array(
-            array('href' => $chemin,
-                'text' => 'Acceuil'),
-            array('href' => $chemin."/search",
-                'text' => "Recherche")
-        );
-        echo $template->render(array("breadcrumb" => $menu, "chemin" => $chemin, "categories" => $cat));
+        $response = new SlimResponse();
+        return $twig->render($response, "key-generator.html.twig", [
+            "breadcrumb" => $menu, 
+            "chemin" => $chemin, 
+            "categories" => $cat
+        ]);
     }
 
-    function generateKey($twig, $menu, $chemin, $cat, $nom) {
+    public function generateKey(Twig $twig, array $menu, string $chemin, array $cat, string $nom): Response 
+    {
         $nospace_nom = str_replace(' ', '', $nom);
+        $response = new SlimResponse();
 
         if($nospace_nom === '') {
-            $template = $twig->load("key-generator-error.html.twig");
-            $menu = array(
-                array('href' => $chemin,
-                    'text' => 'Acceuil'),
-                array('href' => $chemin."/search",
-                    'text' => "Recherche")
-            );
+            $menu = [
+                ['href' => $chemin, 'text' => 'Accueil'],
+                ['href' => $chemin."/api/key", 'text' => "Erreur"]
+            ];
 
-            echo $template->render(array("breadcrumb" => $menu, "chemin" => $chemin, "categories" => $cat));
-        } else {
-            $template = $twig->load("key-generator-result.html.twig");
-            $menu = array(
-                array('href' => $chemin,
-                    'text' => 'Acceuil'),
-                array('href' => $chemin."/search",
-                    'text' => "Recherche")
-            );
-
-            // Génere clé unique de 13 caractères
-            $key = uniqid();
-            // Ajouter clé dans la base
-            $apikey = new ApiKey();
-
-            $apikey->id_apikey = $key;
-            $apikey->name_key = htmlentities($nom);
-            $apikey->save();
-
-            echo $template->render(array("breadcrumb" => $menu, "chemin" => $chemin, "categories" => $cat, "key" => $key));
+            return $twig->render($response, "key-generator-error.html.twig", [
+                "breadcrumb" => $menu, 
+                "chemin" => $chemin, 
+                "categories" => $cat
+            ]);
         }
 
+        $menu = [
+            ['href' => $chemin, 'text' => 'Accueil'],
+            ['href' => $chemin."/api/key", 'text' => "Clé générée"]
+        ];
+
+        // Generate unique 13-character key
+        $key = uniqid();
+        
+        // Save key to database
+        $apikey = new ApiKey();
+        $apikey->id_apikey = $key;
+        $apikey->name_key = htmlspecialchars($nom, ENT_QUOTES, 'UTF-8');
+        $apikey->save();
+
+        return $twig->render($response, "key-generator-result.html.twig", [
+            "breadcrumb" => $menu, 
+            "chemin" => $chemin, 
+            "categories" => $cat, 
+            "key" => $key
+        ]);
     }
-
 }
-
-?>
