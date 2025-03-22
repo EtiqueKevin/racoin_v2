@@ -1,0 +1,196 @@
+openapi: 3.0.0
+info:
+  title: Racoin API
+  description: API pour le service d'annonces Racoin
+  version: 1.0.0
+
+servers:
+  - url: /api
+    description: Serveur local
+
+paths:
+  /annonce/{id}:
+    get:
+      summary: Récupère les détails d'une annonce
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID de l'annonce
+      responses:
+        '200':
+          description: Détails de l'annonce
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnnonceDetail'
+        '404':
+          description: Annonce non trouvée
+
+  /annonces:
+    get:
+      summary: Liste toutes les annonces
+      responses:
+        '200':
+          description: Liste des annonces
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AnnonceResume'
+                  links:
+                    $ref: '#/components/schemas/Links'
+
+  /categorie/{id}:
+    get:
+      summary: Récupère les annonces d'une catégorie
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID de la catégorie
+      responses:
+        '200':
+          description: Catégorie et ses annonces
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategorieWithAnnonces'
+
+  /categories:
+    get:
+      summary: Liste toutes les catégories
+      responses:
+        '200':
+          description: Liste des catégories
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Categorie'
+                  links:
+                    $ref: '#/components/schemas/Links'
+
+  /key:
+    post:
+      summary: Génère une clé API
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                nom:
+                  type: string
+                  description: Nom de l'utilisateur
+      responses:
+        '200':
+          description: Clé API générée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: string
+
+components:
+  schemas:
+    AnnonceDetail:
+      type: object
+      properties:
+        id_annonce:
+          type: integer
+        categorie:
+          $ref: '#/components/schemas/Categorie'
+        annonceur:
+          $ref: '#/components/schemas/Annonceur'
+        departement:
+          $ref: '#/components/schemas/Departement'
+        prix:
+          type: number
+        date:
+          type: string
+          format: date-time
+        titre:
+          type: string
+        description:
+          type: string
+        ville:
+          type: string
+        links:
+          $ref: '#/components/schemas/Links'
+
+    AnnonceResume:
+      type: object
+      properties:
+        id_annonce:
+          type: integer
+        prix:
+          type: number
+        titre:
+          type: string
+        ville:
+          type: string
+        links:
+          $ref: '#/components/schemas/Links'
+
+    Categorie:
+      type: object
+      properties:
+        id_categorie:
+          type: integer
+        nom_categorie:
+          type: string
+        links:
+          $ref: '#/components/schemas/Links'
+
+    CategorieWithAnnonces:
+      allOf:
+        - $ref: '#/components/schemas/Categorie'
+        - type: object
+          properties:
+            annonces:
+              type: array
+              items:
+                $ref: '#/components/schemas/AnnonceResume'
+
+    Annonceur:
+      type: object
+      properties:
+        email:
+          type: string
+        nom_annonceur:
+          type: string
+        telephone:
+          type: string
+
+    Departement:
+      type: object
+      properties:
+        id_departement:
+          type: integer
+        nom_departement:
+          type: string
+
+    Links:
+      type: object
+      properties:
+        self:
+          type: object
+          properties:
+            href:
+              type: string
